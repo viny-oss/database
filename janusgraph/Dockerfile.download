@@ -7,7 +7,8 @@ ENV RUN_DEPS="openjdk-8-jre"
 CMD ["/sbin/my_init"]
 
 RUN echo "Installing installation dependencies" && \
-  apt-get -qq update && apt-get -qq install -y $BUILD_DEPS --no-install-recommends > /dev/null && \
+  apt-get -qq update && \
+  apt-get -qq install -y $BUILD_DEPS --no-install-recommends > /dev/null && \
   echo "Starting installation" && \
   mkdir /viny && \
   cd /viny && \
