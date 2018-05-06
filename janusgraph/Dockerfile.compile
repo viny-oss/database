@@ -1,0 +1,28 @@
+FROM phusion/baseimage:latest
+LABEL maintainer "Sylvain Corsini <sylvain.corsini@pm.me>"
+
+ENV BUILD_DEPS="maven git unzip openjdk-8-jdk"
+ENV RUN_DEPS="openjdk-8-jre"
+
+CMD ["/sbin/my_init"]
+
+RUN apt-get update && apt-get install -y $BUILD_DEPS --no-install-recommends
+RUN git clone https://github.com/JanusGraph/janusgraph.git /tmp/janusgraph && \
+  cd /tmp/janusgraph && \
+  git checkout tags/v0.2.0 && \
+  mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+     -T $(getconf _NPROCESSORS_ONLN) clean install -Pjanusgraph-release -Dgpg.skip=true \
+     -DskipTests=true && \
+  mkdir /viny && \
+  cd /viny && \
+  unzip /tmp/janusgraph/janusgraph-dist/janusgraph-dist-hadoop-2/target/janusgraph-*-hadoop2.zip && \
+  mv janusgraph-*-hadoop2 janusgraph
+RUN apt-get purge -y --auto-remove $BUILD_DEPS
+RUN apt-get install -y $RUN_DEPS --no-install-recommends
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.m2/
+
+EXPOSE 8182
+
+VOLUME /viny/
+
+CMD ["/viny/janusgraph/bin/gremlin-server.sh"]

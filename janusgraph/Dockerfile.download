@@ -1,0 +1,25 @@
+FROM phusion/baseimage:latest
+LABEL maintainer "Sylvain Corsini <sylvain.corsini@pm.me>"
+
+ENV BUILD_DEPS="unzip wget"
+ENV RUN_DEPS="openjdk-8-jre"
+
+CMD ["/sbin/my_init"]
+
+RUN apt-get update && apt-get install -y $BUILD_DEPS --no-install-recommends
+
+RUN mkdir /viny && \
+  cd /viny && \
+  wget -q https://github.com/JanusGraph/janusgraph/releases/download/v0.2.0/janusgraph-0.2.0-hadoop2.zip && \
+  unzip /tmp/janusgraph/janusgraph-dist/janusgraph-dist-hadoop-2/target/janusgraph-0.2.0-hadoop2.zip && \
+  mv janusgraph-0.2.0-hadoop2 janusgraph && \
+  rm janusgraph-0.2.0-hadoop2.zip
+RUN apt-get purge -y --auto-remove $BUILD_DEPS
+RUN apt-get install -y $RUN_DEPS --no-install-recommends
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.m2/
+
+EXPOSE 8182
+
+VOLUME /viny/
+
+CMD ["/viny/janusgraph/bin/gremlin-server.sh"]

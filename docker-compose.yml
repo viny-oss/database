@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+  cassandra:
+    image: 'bitnami/cassandra:3.11.2'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '7000:7000'
+      - '7001:7001'
+      - '9042:9042'
+      - '9160:9160'
+    volumes:
+      - './data:/bitnami'
+    networks:
+      - app-tier
+
+  elasticsearch:
+    image: 'bitnami/elasticsearch:5.6.4'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+      - './data:/bitnami'
+    networks:
+      - app-tier
+
+  janusgraph:
+    build:
+      context: ./janusgraph/
+      dockerfile: Dockerfile.download
+    ports:
+      - '8182:8182'
+    depends_on:
+      - cassandra
+      - elasticsearch
+    volumes:
+      - './data:/opt/'
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
