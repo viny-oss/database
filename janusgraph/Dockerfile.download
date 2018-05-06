@@ -19,12 +19,12 @@ RUN echo "Installing installation dependencies" && \
   echo "Installing running dependencies" && \
   apt-get -qq install -y $RUN_DEPS --no-install-recommends > /dev/null && \
   echo "Cleaning" && \
-  apt-get -qq purge -y --auto-remove $BUILD_DEPS && \
-  apt-get -qq clean && \
+  apt-get -qq purge -y --auto-remove $BUILD_DEPS > /dev/null && \
+  apt-get -qq clean > /dev/null && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.m2/
 
 EXPOSE 8182
 
-VOLUME /viny/
+COPY conf /viny/janusgraph/conf/gremlin-server
 
 CMD ["/viny/janusgraph/bin/gremlin-server.sh"]
