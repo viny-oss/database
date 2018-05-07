@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         Cluster cluster = null;
         try {
-            cluster = Cluster.builder().addContactPoint("127.0.0.1").build();
+            cluster = Cluster.builder().addContactPoint("cassandra").build();
             Session session = cluster.connect();
 
             ResultSet rs = session.execute("select release_version from system.local");
