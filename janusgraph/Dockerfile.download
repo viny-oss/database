@@ -28,4 +28,8 @@ EXPOSE 8182
 
 COPY conf /viny/janusgraph/conf/gremlin-server
 
+HEALTHCHECK --interval=1m --timeout=5s --retries=10 \
+  CMD curl -f elasticsearch:9200/_cluster/health?wait_for_status=yellow \
+    || exit 1
+
 CMD ["/viny/janusgraph/bin/gremlin-server.sh"]
