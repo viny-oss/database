@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   cassandra:
@@ -11,7 +11,7 @@ services:
       - '9042:9042'
       - '9160:9160'
     volumes:
-      - './data:/bitnami'
+      - './data/cassandra:/bitnami/cassandra'
     networks:
       - app-tier
 
@@ -23,7 +23,7 @@ services:
       - '9200:9200'
       - '9300:9300'
     volumes:
-      - './data:/bitnami'
+      - './data/elasticsearch:/bitnami/elasticsearch'
     networks:
       - app-tier
 
@@ -37,7 +37,7 @@ services:
       - cassandra
       - elasticsearch
     volumes:
-      - './data:/opt/'
+      - './data/janusgraph:/viny/janusgraph'
     networks:
       - app-tier
 
