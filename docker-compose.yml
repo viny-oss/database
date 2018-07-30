@@ -30,7 +30,6 @@ services:
   janusgraph:
     build:
       context: ./janusgraph/
-      dockerfile: Dockerfile.download
     ports:
       - '8182:8182'
     depends_on:
